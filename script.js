@@ -6,15 +6,15 @@ if(SpeechRecognition) {
   var commands = [ 'reset'];
   var grammar = '#JSGF V1.0; grammar colors; public <color> = ' + commands.join(' | ') + ' ;'
 
+  var speechRecognitionList = new SpeechGrammarList();
+      speechRecognitionList.addFromString(grammar, 1);
+      
   var recognition = new SpeechRecognition();
       recognition.grammars = speechRecognitionList;
       //recognition.continuous = false;
       recognition.lang = 'en-US';
       recognition.interimResults = false;
       recognition.maxAlternatives = 1;
-
-  var speechRecognitionList = new SpeechGrammarList();
-      speechRecognitionList.addFromString(grammar, 1);
 }
 
 var speechSynth = new SpeechSynthesisUtterance();

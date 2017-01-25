@@ -13,6 +13,7 @@
     <div id="stage" class="stage" 
         :class="{'menu-open': menuOpen, 'voices-open': voicesOpen}" 
         :style="{ color: activeReminder.waveFrontColor, backgroundColor: stageBg }"
+        v-cloak
     >
         <div class="menu__button" @click="toggleMenu">
             <div class="menu__dot"></div>
