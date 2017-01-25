@@ -155,7 +155,7 @@ new Vue({
     startTimer(secondsLeft) {
       let now = new Date();
 
-      // later on this timer may be stopped
+      // later on, this timer may be stopped
       if(this.countdown) {
         window.clearInterval(this.countdown);
       }
@@ -195,7 +195,9 @@ new Vue({
       window.clearInterval(this.countdown);
     },
     continueTimer() {
-      this.startTimer(this.secondsLeft-1);
+      if(this.secondsLeft > 0) {
+        this.startTimer(this.secondsLeft-1);
+      }
     },
     giveWarning() {
       speechSynth.text = this.activeReminder.warningMsg;
