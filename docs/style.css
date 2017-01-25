@@ -249,7 +249,8 @@ body {
     font-size: 1.3em;
     font-weight: 300;
     color: rgba(255, 255, 255, 0.8);
-    text-decoration: none; }
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent; }
     .voices-list__link:hover {
       background: rgba(255, 255, 255, 0.05); }
     .voices-list__link span {
