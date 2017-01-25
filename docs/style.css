@@ -14,6 +14,10 @@ body {
   font-family: 'Roboto', sans-serif;
   background: linear-gradient(to bottom right, #c8c897, #6590A2); }
 
+a {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none; }
+
 .stage {
   position: relative;
   overflow: hidden;
@@ -249,8 +253,7 @@ body {
     font-size: 1.3em;
     font-weight: 300;
     color: rgba(255, 255, 255, 0.8);
-    text-decoration: none;
-    -webkit-tap-highlight-color: transparent; }
+    text-decoration: none; }
     .voices-list__link:hover {
       background: rgba(255, 255, 255, 0.05); }
     .voices-list__link span {
