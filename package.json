@@ -1,0 +1,17 @@
+{
+  "name": "reminderapp",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "node-sass --output-style compressed style.scss style.css",
+    "develop": "npm run browsersync & node-sass -w style.scss style.css",
+    "browsersync": "browser-sync start --server -f 'style.scss,script.js'"
+  },
+  "author": "Irko Palenius",
+  "license": "MIT",
+  "devDependencies": {
+    "browser-sync": "latest",
+    "node-sass": "latest"
+  }
+}
