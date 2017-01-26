@@ -21,6 +21,9 @@ a {
   -webkit-tap-highlight-color: transparent;
   user-select: none; }
 
+::-webkit-scrollbar {
+  display: none; }
+
 .stage {
   position: relative;
   overflow: hidden;
@@ -72,6 +75,8 @@ a {
   .stage.voices-open .voices-menu__close {
     opacity: 1;
     transform: translate3d(0, 0, 0) rotate(0); }
+  .stage.voices-open .voices-list-wrapper {
+    opacity: 1; }
   .stage.voices-open .voices-list__item {
     opacity: 1;
     transform: translate(0, 0);
@@ -228,7 +233,8 @@ a {
   left: 0;
   bottom: 0;
   right: 0;
-  overflow-y: scroll; }
+  overflow-y: auto;
+  opacity: 0; }
 
 .voices-list {
   margin: 0;

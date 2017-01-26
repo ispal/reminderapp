@@ -28,6 +28,10 @@ a {
     user-select: none;
 }
 
+::-webkit-scrollbar { 
+    display: none; 
+}
+
 .stage {
     position: relative;
     overflow: hidden;
@@ -96,12 +100,15 @@ a {
         .voices-menu__bg {
             transform: scale(6);
         }
-
+        
         .voices-menu__close {
             opacity: 1;
             transform: translate3d(0,0,0) rotate(0);
         }
-        
+
+        .voices-list-wrapper {
+            opacity: 1;
+        }
         .voices-list__item {
             opacity: 1;
             transform: translate(0,0);
@@ -284,7 +291,8 @@ a {
     left: 0;
     bottom: 0;
     right: 0;
-    overflow-y: scroll;
+    overflow-y: auto;
+    opacity: 0;
 }
 .voices-list {
     margin: 0;
