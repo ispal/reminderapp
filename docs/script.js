@@ -19,15 +19,15 @@ if(SpeechRecognition) {
 
 var speechSynth = new SpeechSynthesisUtterance();
 
-const padDigits = (number, digits) => {
+var padDigits = function (number, digits) {
     return Array(Math.max(digits - String(number).length + 1, 0)).join(0) + number;
 }
 
-const calculatePercentsLeft = (value, from) => {
+var calculatePercentsLeft = function (value, from) {
     return Math.floor(Math.ceil(value/1000) / (from * 60) * 100)
 }
 
-const calculateScaleFactor = (percent) => {
+var calculateScaleFactor = function (percent) {
     return 1-(100-percent)/100;
 }
 
@@ -41,7 +41,7 @@ function guid() {
     s4() + '-' + s4() + s4() + s4();
 }
 
-const settings = {
+var settings = {
   water: {
     warningMsg: 'Remember to drink',
     timeIsUpMsg: 'Time\'s up. You really need to drink now',
@@ -73,7 +73,7 @@ const settings = {
 
 new Vue({
   el: '#stage',
-  data() {
+  data: function data() {
     return {
         color: '',
         percents: [100],
@@ -93,21 +93,23 @@ new Vue({
         stageBg: settings.water.stageBg
     }
   },
-  mounted() {
+  mounted: function mounted() {
+    var this$1 = this;
+
     this.resetTimer();
     this.voices = speechSynthesis.getVoices();
 
     if(this.voices.length === 0) {
-      speechSynthesis.onvoiceschanged = () => {
-        this.voices = speechSynthesis.getVoices();
+      speechSynthesis.onvoiceschanged = function () {
+        this$1.voices = speechSynthesis.getVoices();
       };
     }
   },
   computed: {
-    supportSpeechSynth() {
+    supportSpeechSynth: function supportSpeechSynth() {
       return 'speechSynthesis' in window; 
     },
-    supportSpeechRecognition() {
+    supportSpeechRecognition: function supportSpeechRecognition() {
       return SpeechRecognition;
     }
   },
@@ -121,123 +123,128 @@ new Vue({
     }
   },
   methods: {
-    setActiveReminder(reminder) {
+    setActiveReminder: function setActiveReminder(reminder) {
       this.activeReminder = settings[reminder];
       this.stageBg = this.activeReminder.stageBg;
     },
-    toggleMenu() {
+    toggleMenu: function toggleMenu() {
       this.menuOpen = !this.menuOpen;
       if(this.menuOpen) {
         this.pauseTimer();
-        this.waveStyles = `transform: translate3d(0,100%,0); transition-delay: .25s;`;
+        this.waveStyles = "transform: translate3d(0,100%,0); transition-delay: .25s;";
       }else {
         this.continueTimer();
       }
     },
-    toggleVoicesMenu() {
+    toggleVoicesMenu: function toggleVoicesMenu() {
       this.voicesOpen = !this.voicesOpen;
     },
-    voiceSelected(voice) {
+    voiceSelected: function voiceSelected(voice) {
       this.selectedVoice = voice;
       speechSynth.voice = voice;
     },
-    start(reminder) {
+    start: function start(reminder) {
       this.setActiveReminder(reminder);
       this.percents = [100];
       this.timer = [];
       this.menuOpen = false;
       this.resetTimer();
     },
-    resetTimer() {
-      let durationInSeconds = 60 * this.activeReminder.durationInMinutes;
+    resetTimer: function resetTimer() {
+      var durationInSeconds = 60 * this.activeReminder.durationInMinutes;
       this.startTimer(durationInSeconds);
     },
-    startTimer(secondsLeft) {
-      let now = new Date();
+    startTimer: function startTimer(secondsLeft) {
+      var this$1 = this;
+
+      var now = new Date();
 
       // later on, this timer may be stopped
       if(this.countdown) {
         window.clearInterval(this.countdown);
       }
       
-      this.countdown = countdown(ts => {
-        this.secondsLeft= Math.ceil(ts.value/1000);
-        this.percentsLeft = calculatePercentsLeft(ts.value,this.activeReminder.durationInMinutes);
-        this.waveStyles = `transform: scale(1,${calculateScaleFactor(this.percentsLeft)})`;
-        this.updateCountdown(ts);
-        if(this.percentsLeft == 10) {
-          this.giveWarning();
+      this.countdown = countdown(function (ts) {
+        this$1.secondsLeft= Math.ceil(ts.value/1000);
+        this$1.percentsLeft = calculatePercentsLeft(ts.value,this$1.activeReminder.durationInMinutes);
+        this$1.waveStyles = "transform: scale(1," + (calculateScaleFactor(this$1.percentsLeft)) + ")";
+        this$1.updateCountdown(ts);
+        if(this$1.percentsLeft == 10) {
+          this$1.giveWarning();
         }
-        if(this.percentsLeft <= 0){
-          this.timeIsUpMessage();
-          this.pauseTimer();
-          this.timer = [];
-          setTimeout(() => {
-            this.startListenVoiceCommands();
+        if(this$1.percentsLeft <= 0){
+          this$1.timeIsUpMessage();
+          this$1.pauseTimer();
+          this$1.timer = [];
+          setTimeout(function () {
+            this$1.startListenVoiceCommands();
           }, 1500);
           
         }
       }, now.getTime() + (secondsLeft * 1000));
     },
-    updateCountdown(ts) {
+    updateCountdown: function updateCountdown(ts) {
       if(this.timer.length > 2) {
         this.timer.splice(2);
       }
 
-      const newTime = {
+      var newTime = {
         id: guid(),
-        value: `${padDigits(ts.minutes, 2)}:${padDigits(ts.seconds, 2)}`
+        value: ((padDigits(ts.minutes, 2)) + ":" + (padDigits(ts.seconds, 2)))
       };
 
       this.timer.unshift(newTime);
     },
-    pauseTimer() {
+    pauseTimer: function pauseTimer() {
       window.clearInterval(this.countdown);
     },
-    continueTimer() {
+    continueTimer: function continueTimer() {
       if(this.secondsLeft > 0) {
         this.startTimer(this.secondsLeft-1);
       }
     },
-    giveWarning() {
+    giveWarning: function giveWarning() {
       speechSynth.text = this.activeReminder.warningMsg;
       window.speechSynthesis.speak(speechSynth);
     },
-    timeIsUpMessage() {
+    timeIsUpMessage: function timeIsUpMessage() {
       speechSynth.text = this.activeReminder.timeIsUpMsg;
       window.speechSynthesis.speak(speechSynth);
     },
-    timerResetMessage() {
-      speechSynth.text = `Timer reset. Time left ${this.activeReminder.durationInMinutes} ${this.activeReminder.durationInMinutes > 1 ? 'minutes': 'minute'}`;
+    timerResetMessage: function timerResetMessage() {
+      speechSynth.text = "Timer reset. Time left " + (this.activeReminder.durationInMinutes) + " " + (this.activeReminder.durationInMinutes > 1 ? 'minutes': 'minute');
       window.speechSynthesis.speak(speechSynth);
     },
-    reset() {
+    reset: function reset() {
       this.resetTimer();
       this.timerResetMessage();
     },
-    startListenVoiceCommands() {
-      if(this.isListening) return;
+    startListenVoiceCommands: function startListenVoiceCommands() {
+      var this$1 = this;
+
+      if(this.isListening) { return; }
 
       this.isListening = true;
       recognition.start();
-      recognition.onresult = (event) => {
+      recognition.onresult = function (event) {
         var last = event.results.length - 1;
         if(event.results[last][0].transcript == "reset") {
-          this.resetTimer();
-          this.timerResetMessage();
+          this$1.resetTimer();
+          this$1.timerResetMessage();
         }
       }
-      recognition.onend = () => {
-        this.isListening = false;
-        this.voiceTooltipClosed = true;
+      recognition.onend = function () {
+        this$1.isListening = false;
+        this$1.voiceTooltipClosed = true;
         recognition.stop();
       }
     },
-    mouseOver(type) {
+    mouseOver: function mouseOver(type) {
       this.stageBg = settings[type].stageBg;
     },
-    mouseOut() {
+    mouseOut: function mouseOut() {
       this.stageBg = this.activeReminder.stageBg;
     }
   }
 });
+
