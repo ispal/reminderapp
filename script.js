@@ -216,7 +216,7 @@ new Vue({
       this.timerResetMessage();
     },
     startListenVoiceCommands() {
-      if(this.isListening) return;
+      if(this.isListening || !this.supportSpeechRecognition) return;
 
       this.isListening = true;
       recognition.start();
