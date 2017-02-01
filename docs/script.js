@@ -1,9 +1,11 @@
 var SpeechRecognition = SpeechRecognition || window.webkitSpeechRecognition || undefined;
-
+var numbers = Array.apply(null, Array(101)).map(function (_, i) {return i;});
+console.log(numbers);
 if(SpeechRecognition) {
   var SpeechGrammarList = SpeechGrammarList || window.webkitSpeechGrammarList || undefined;
   var SpeechRecognitionEvent = SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent || undefined;
-  var commands = [ 'reset'];
+
+  var commands = ['reset', 'timer' ].concat( numbers);
   var grammar = '#JSGF V1.0; grammar colors; public <color> = ' + commands.join(' | ') + ' ;'
 
   var speechRecognitionList = new SpeechGrammarList();
@@ -13,7 +15,7 @@ if(SpeechRecognition) {
       recognition.grammars = speechRecognitionList;
       //recognition.continuous = false;
       recognition.lang = 'en-US';
-      recognition.interimResults = false;
+      recognition.interimResults = true;
       recognition.maxAlternatives = 1;
 }
 
@@ -89,7 +91,7 @@ new Vue({
         activeReminder: settings.water,
         menuOpen: false,
         isListening: false,
-        voiceTooltipClosed: false, 
+        tooltipText: 'Say eg. "reset"',
         stageBg: settings.water.stageBg
     }
   },
@@ -228,14 +230,37 @@ new Vue({
       recognition.start();
       recognition.onresult = function (event) {
         var last = event.results.length - 1;
-        if(event.results[last][0].transcript == "reset") {
+        var transcript = event.results[last][0].transcript;
+        var splittedTranscript = transcript.split(' ');
+        var isFinal = event.results[last].isFinal;
+
+        this$1.tooltipText = transcript;
+
+        if(transcript == "reset") {
           this$1.resetTimer();
           this$1.timerResetMessage();
         }
+        if(
+          splittedTranscript.length >= 3 &&
+          splittedTranscript[0] == 'timer' &&
+          isFinal &&
+          numbers.includes(Number(splittedTranscript[1])) && 
+          (splittedTranscript[2] == 'minute' || splittedTranscript[2] == 'minutes')
+        ) {
+          this$1.activeReminder.durationInMinutes = numbers[splittedTranscript[1]];
+          this$1.resetTimer();
+          this$1.timerResetMessage();
+        }
+        
+
       }
       recognition.onend = function () {
         this$1.isListening = false;
-        this$1.voiceTooltipClosed = true;
+        this$1.tooltipText = '';
+        recognition.stop();
+      }
+      recognition.onsoundend = function () {
+        this$1.isListening = false;
         recognition.stop();
       }
     },

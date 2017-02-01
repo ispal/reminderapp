@@ -212,6 +212,14 @@ a {
     }
 }
 
+.fade-enter-active,
+.fade-leave-active {
+  transition: all .15s ease;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
 .voices-menu {
     position: absolute;
     top: 0;

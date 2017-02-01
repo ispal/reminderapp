@@ -170,6 +170,13 @@ a {
       border-width: 0 5px 5px 5px;
       border-color: transparent transparent rgba(255, 255, 255, 0.1) transparent; }
 
+.fade-enter-active,
+.fade-leave-active {
+  transition: all .15s ease; }
+
+.fade-enter, .fade-leave-to {
+  opacity: 0; }
+
 .voices-menu {
   position: absolute;
   top: 0;

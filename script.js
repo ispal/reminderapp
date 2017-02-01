@@ -1,9 +1,11 @@
 var SpeechRecognition = SpeechRecognition || window.webkitSpeechRecognition || undefined;
-
+var numbers = Array.apply(null, Array(101)).map(function (_, i) {return i;});
+console.log(numbers);
 if(SpeechRecognition) {
   var SpeechGrammarList = SpeechGrammarList || window.webkitSpeechGrammarList || undefined;
   var SpeechRecognitionEvent = SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent || undefined;
-  var commands = [ 'reset'];
+
+  var commands = ['reset', 'timer', ...numbers];
   var grammar = '#JSGF V1.0; grammar colors; public <color> = ' + commands.join(' | ') + ' ;'
 
   var speechRecognitionList = new SpeechGrammarList();
@@ -13,7 +15,7 @@ if(SpeechRecognition) {
       recognition.grammars = speechRecognitionList;
       //recognition.continuous = false;
       recognition.lang = 'en-US';
-      recognition.interimResults = false;
+      recognition.interimResults = true;
       recognition.maxAlternatives = 1;
 }
 
@@ -89,7 +91,7 @@ new Vue({
         activeReminder: settings.water,
         menuOpen: false,
         isListening: false,
-        voiceTooltipClosed: false, 
+        tooltipText: 'Say eg. "reset"',
         stageBg: settings.water.stageBg
     }
   },
@@ -221,15 +223,38 @@ new Vue({
       this.isListening = true;
       recognition.start();
       recognition.onresult = (event) => {
-        var last = event.results.length - 1;
-        if(event.results[last][0].transcript == "reset") {
+        let last = event.results.length - 1;
+        let transcript = event.results[last][0].transcript;
+        let splittedTranscript = transcript.split(' ');
+        let isFinal = event.results[last].isFinal;
+
+        this.tooltipText = transcript;
+
+        if(transcript == "reset") {
           this.resetTimer();
           this.timerResetMessage();
         }
+        if(
+          splittedTranscript.length >= 3 &&
+          splittedTranscript[0] == 'timer' &&
+          isFinal &&
+          numbers.includes(Number(splittedTranscript[1])) && 
+          (splittedTranscript[2] == 'minute' || splittedTranscript[2] == 'minutes')
+        ) {
+          this.activeReminder.durationInMinutes = numbers[splittedTranscript[1]];
+          this.resetTimer();
+          this.timerResetMessage();
+        }
+        
+
       }
       recognition.onend = () => {
         this.isListening = false;
-        this.voiceTooltipClosed = true;
+        this.tooltipText = '';
+        recognition.stop();
+      }
+      recognition.onsoundend = () => {
+        this.isListening = false;
         recognition.stop();
       }
     },
