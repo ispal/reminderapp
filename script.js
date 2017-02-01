@@ -1,6 +1,6 @@
 var SpeechRecognition = SpeechRecognition || window.webkitSpeechRecognition || undefined;
 var numbers = Array.apply(null, Array(101)).map(function (_, i) {return i;});
-console.log(numbers);
+
 if(SpeechRecognition) {
   var SpeechGrammarList = SpeechGrammarList || window.webkitSpeechGrammarList || undefined;
   var SpeechRecognitionEvent = SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent || undefined;
